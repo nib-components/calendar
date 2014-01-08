@@ -113,7 +113,7 @@ Calendar.prototype.select = function(date, silent) {
   if( !silent ){
     this.trigger('select', this.date(), this.moment());
   }
-  
+
   this.view(date);
   return this;
 };
@@ -155,7 +155,7 @@ Calendar.prototype.moment = function() {
  * @return {Boolean}
  */
 Calendar.prototype.isSameDay = function(a, b) {
-  return a.diff(b,'days') === 0;
+  return moment(a).format('DD-MM-YYYY') === moment(b).format('DD-MM-YYYY');
 };
 
 /**
@@ -167,7 +167,7 @@ Calendar.prototype.isSameDay = function(a, b) {
 Calendar.prototype.isSameMonth = function(a, b) {
   return this.isSameDay(moment(a).date(1), moment(b).date(1));
 };
-  
+
 /**
  * Get the date that the calendar needs to start rendering
  * from. This will include the previous month if this month
