@@ -1,6 +1,6 @@
 {
   "name": "calendar",
   "description": "Calendar that allows selecting dates and emits events",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "scripts": ["index.js", "template.js"]
 }

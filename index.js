@@ -180,7 +180,7 @@ Calendar.prototype.getStartDate = function(date) {
   var daysInLastMonth = lastMonth.daysInMonth();
   var inactiveBeforeDays = moment(date).date(1).day() - 1;
 
-  if( inactiveBeforeDays > 0 ) {
+  if( inactiveBeforeDays >= 0 ) {
     return moment(lastMonth).date( daysInLastMonth - inactiveBeforeDays );
   }
   else {
