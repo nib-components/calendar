@@ -53,6 +53,10 @@ Calendar.prototype.todayClass = 'is-today';
  */
 Calendar.prototype.disabledClass = 'is-disabled';
 
+Calendar.prototype.prevMonthClass = 'is-prev-month';
+Calendar.prototype.nextMonthClass = 'is-next-month';
+
+
 /**
  * Format for the title of the calendar
  * @type {String}
@@ -123,7 +127,13 @@ Calendar.prototype.next = function() {
  * @return {Calendar}
  */
 Calendar.prototype.select = function(date, silent) {
-  this.selected = moment(date);
+  date = moment(date);
+
+  if (this.isDayDisabled(date)) {
+    return this;
+  }
+
+  this.selected = date;
 
   if(!silent){
     this.emit('select', this.date(), this.moment());
@@ -212,8 +222,10 @@ Calendar.prototype.getStartDate = function(date) {
 Calendar.prototype.renderDay = function(data) {
   var day = domify('<span />');
   if (data.isSelected) day.classList.add(this.selectedClass);
-  if (data.isDisabled) day.classList.toggle(this.disabledClass);
-  if (data.isToday) day.classList.toggle(this.todayClass);
+  if (data.isDisabled) day.classList.add(this.disabledClass);
+  if (data.isToday) day.classList.add(this.todayClass);
+  if (data.isInPrevMonth) day.classList.add(this.prevMonthClass);
+  if (data.isInNextMonth) day.classList.add(this.nextMonthClass);
   day.setAttribute('data-date', data.date);
   day.classList.add('js-select');
   day.textContent = data.day;
@@ -245,7 +257,49 @@ Calendar.prototype.isDaySelected = function(day) {
  * @returns {Boolean}
  */
 Calendar.prototype.isDayDisabled = function(day) {
-  return !this.isSameMonth(day, this.current);
+  return false;
+};
+
+/**
+ * Return whether the day is in the previous month
+ * @param   {Moment} day
+ * @returns {Boolean}
+ */
+Calendar.prototype.isDayInPrevMonth = function(day) {
+  var
+    cyear   = moment(this.current).year(),
+    cmonth  = moment(this.current).month(),
+    dyear   = moment(day).year(),
+    dmonth  = moment(day).month()
+  ;
+
+  if (dyear === (cyear-1) && dmonth === 11 && cmonth === 0) {
+    return true;
+  } else {
+    return dmonth === (cmonth-1);
+  }
+
+};
+
+/**
+ * Return whether the day is in the next month
+ * @param   {Moment} day
+ * @returns {Boolean}
+ */
+Calendar.prototype.isDayInNextMonth = function(day) {
+  var
+    cyear   = moment(this.current).year(),
+    cmonth  = moment(this.current).month(),
+    dyear   = moment(day).year(),
+    dmonth  = moment(day).month()
+  ;
+
+  //check the year
+  if (dyear-cyear < 0 || dyear-cyear > 1) {
+    return false;
+  }
+
+  return dmonth === (cmonth+1) % 12;
 };
 
 /**
@@ -262,11 +316,13 @@ Calendar.prototype.renderBody = function() {
 
   for (var i = 0; i <= 41; i++) {
     fragment.appendChild(this.renderDay({
-      day:        current.date(),
-      date:       current.format(),
-      isSelected: this.isDaySelected(current),
-      isDisabled: this.isDayDisabled(current),
-      isToday:    this.isSameDay(current, today)
+      day:            current.date(),
+      date:           current.format(),
+      isToday:        this.isSameDay(current, today),
+      isInPrevMonth:  this.isDayInPrevMonth(current),
+      isInNextMonth:  this.isDayInNextMonth(current),
+      isSelected:     this.isDaySelected(current),
+      isDisabled:     this.isDayDisabled(current)
     }));
     current.add(1, 'days');
   }
