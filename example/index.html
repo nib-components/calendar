@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Calendar Example</title>
+    <link href="../build/build.css" rel="stylesheet"/>
+    <style>
+        .calendar {
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <script src="../build/build.js"></script>
+    <script>
+
+        var Calendar = require('calendar');
+
+        var calendar = new Calendar();
+
+        calendar.on('select', function() {
+            console.log(arguments);
+        });
+
+        document.body.appendChild(calendar.el);
+
+    </script>
+</body>
+</html>
