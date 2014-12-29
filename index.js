@@ -221,6 +221,7 @@ Calendar.prototype.getStartDate = function(date) {
  */
 Calendar.prototype.renderDay = function(data) {
   var day = domify('<span />');
+  day.classList.add('calendar__day');
   if (data.isSelected) day.classList.add(this.selectedClass);
   if (data.isDisabled) day.classList.add(this.disabledClass);
   if (data.isToday) day.classList.add(this.todayClass);
