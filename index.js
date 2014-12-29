@@ -231,6 +231,24 @@ Calendar.prototype.renderTitle = function() {
 };
 
 /**
+ * Return whether the a day is selected
+ * @param   {Moment} day
+ * @returns {Boolean}
+ */
+Calendar.prototype.isDaySelected = function(day) {
+  return this.isSameDay(day, this.selected);
+};
+
+/**
+ * Return whether the a day is disabled
+ * @param   {Moment} day
+ * @returns {Boolean}
+ */
+Calendar.prototype.isDayDisabled = function(day) {
+  return !this.isSameMonth(day, this.current);
+};
+
+/**
  * Get the calendar body by looping over each
  * day within that month and creating an element
  * for it. This method should return an element
@@ -244,11 +262,11 @@ Calendar.prototype.renderBody = function() {
 
   for (var i = 0; i <= 41; i++) {
     fragment.appendChild(this.renderDay({
-      day: current.date(),
-      date: current.format(),
-      isSelected: this.isSameDay(current, this.selected),
-      isDisabled: !this.isSameMonth(current, this.current),
-      isToday: this.isSameDay(current, today)
+      day:        current.date(),
+      date:       current.format(),
+      isSelected: this.isDaySelected(current),
+      isDisabled: this.isDayDisabled(current),
+      isToday:    this.isSameDay(current, today)
     }));
     current.add(1, 'days');
   }
