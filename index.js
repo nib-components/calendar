@@ -99,7 +99,7 @@ Calendar.prototype.current = null;
  */
 Calendar.prototype.today = function() {
   this.view();
-  this.select();
+  this.select(moment());
   return this;
 };
 
@@ -127,10 +127,16 @@ Calendar.prototype.next = function() {
  * @return {Calendar}
  */
 Calendar.prototype.select = function(date, silent) {
-  date = moment(date);
 
-  if (this.isDayDisabled(date)) {
-    return this;
+  //handle null dates
+  if (date !== null) {
+
+    date = moment(date);
+
+    if (this.isDayDisabled(date)) {
+      return this;
+    }
+
   }
 
   this.selected = date;
@@ -139,7 +145,7 @@ Calendar.prototype.select = function(date, silent) {
     this.emit('select', this.date(), this.moment());
   }
 
-  this.view(date);
+  this.view(date || this.current);
   return this;
 };
 
@@ -162,7 +168,7 @@ Calendar.prototype.view = function(date) {
  * @return {Moment}
  */
 Calendar.prototype.date = function() {
-  return this.selected.format(this.format);
+  return this.selected ? this.selected.format(this.format) : this.selected;
 };
 
 /**
@@ -249,7 +255,11 @@ Calendar.prototype.renderTitle = function() {
  * @returns {Boolean}
  */
 Calendar.prototype.isDaySelected = function(day) {
-  return this.isSameDay(day, this.selected);
+  if (this.selected) {
+    return this.isSameDay(day, this.selected);
+  } else {
+    return false;
+  }
 };
 
 /**
@@ -316,6 +326,7 @@ Calendar.prototype.renderBody = function() {
   var today = moment();
 
   for (var i = 0; i <= 41; i++) {
+    console.log(i, current.date(), current.format());
     fragment.appendChild(this.renderDay({
       day:            current.date(),
       date:           current.format(),
@@ -353,7 +364,7 @@ Calendar.prototype.render = function() {
 Calendar.prototype.remove = function() {
   this.el.off();
   this.el.remove();
-  this._callbacks = {};
+  this.off();
   return this;
 };
 
