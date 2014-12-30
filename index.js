@@ -326,7 +326,6 @@ Calendar.prototype.renderBody = function() {
   var today = moment();
 
   for (var i = 0; i <= 41; i++) {
-    console.log(i, current.date(), current.format());
     fragment.appendChild(this.renderDay({
       day:            current.date(),
       date:           current.format(),

@@ -81,4 +81,16 @@ describe('Calendar', function() {
 
   });
 
+  describe('next month btn', function() {
+
+    it('should navigate to next month', function() {
+
+    });
+
+    it('should navigate to previous month', function() {
+
+    });
+
+  })
+
 });
