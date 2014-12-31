@@ -13,7 +13,7 @@
   "development": {
     "dependencies": {
       "component/assert": "0.5.0",
-      "nib-styles/calendar": "0.2.0"
+      "nib-styles/calendar": "bc723e054f704f9668f8566e3bc1c3b14fa067b9"
     }
   }
 }
