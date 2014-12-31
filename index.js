@@ -4,17 +4,32 @@ var delegate = require('delegate');
 var emitter = require('emitter');
 var template = require('./template');
 
-function Calendar() {
+/**
+ * Create a calendar object
+ * @constructor
+ * @param   {Object} options
+ * @returns {Calendar}
+ */
+function Calendar(options) {
 
   if (!(this instanceof Calendar)) {
-    return new Calendar();
+    return new Calendar(options);
   }
+
+  options = options || {};
+
+  //override defaults from options
+  this.prevMonthNavClass = options.prevMonthNavClass || this.prevMonthNavClass;
+  this.nextMonthNavClass = options.nextMonthNavClass || this.nextMonthNavClass;
 
   this.el = domify(template);
   delegate.bind(this.el, '.js-next', 'click', this.next.bind(this));
   delegate.bind(this.el, '.js-previous', 'click', this.previous.bind(this));
   delegate.bind(this.el, '.js-today', 'click', this.today.bind(this));
   delegate.bind(this.el, '.js-select', 'click', this.onSelect.bind(this));
+
+  this.prevNavEl = this.el.querySelector('.js-previous');
+  this.nextNavEl = this.el.querySelector('.js-next');
 
   this.title = this.el.querySelector(this.titleSelector);
   this.body = this.el.querySelector(this.bodySelector);
@@ -56,6 +71,8 @@ Calendar.prototype.disabledClass = 'is-disabled';
 Calendar.prototype.prevMonthClass = 'is-prev-month';
 Calendar.prototype.nextMonthClass = 'is-next-month';
 
+Calendar.prototype.prevMonthNavClass = 'icon-circle-arrow icon--light icon--left';
+Calendar.prototype.nextMonthNavClass = 'icon-circle-arrow icon--light icon--right';
 
 /**
  * Format for the title of the calendar
@@ -93,14 +110,22 @@ Calendar.prototype.selected = null;
  */
 Calendar.prototype.current = null;
 
+//-------------------------------------------------------------------------------
+
 /**
- * Select today and render todays month
- * @return {Calendar}
+ * Check whether the user can navigate to the previous month
+ * @returns {Boolean}
  */
-Calendar.prototype.today = function() {
-  this.view();
-  this.select(moment());
-  return this;
+Calendar.prototype.canNavigateToPreviousMonth = function() {
+    return true;
+};
+
+/**
+ * Check whether the user can navigate to the previous month
+ * @returns {Boolean}
+ */
+Calendar.prototype.canNavigateToNextMonth = function() {
+  return true;
 };
 
 /**
@@ -108,6 +133,11 @@ Calendar.prototype.today = function() {
  * @return {Calendar}
  */
 Calendar.prototype.previous = function() {
+
+  if (!this.canNavigateToPreviousMonth()) {
+    return this;
+  }
+
   this.view(moment(this.current).subtract(1, 'months'));
   return this;
 };
@@ -117,7 +147,52 @@ Calendar.prototype.previous = function() {
  * @return {Calendar}
  */
 Calendar.prototype.next = function() {
+
+  if (!this.canNavigateToNextMonth()) {
+    return this;
+  }
+
   this.view(moment(this.current).add(1, 'months'));
+  return this;
+};
+
+/**
+ * Update the visual state of the calendar navigation
+ */
+Calendar.prototype.renderNavigation = function() {
+  var self = this;
+
+  this.prevMonthNavClass.split(' ').forEach(function(className) {
+    self.prevNavEl.classList.add(className);
+  });
+
+  this.nextMonthNavClass.split(' ').forEach(function(className) {
+    self.nextNavEl.classList.add(className);
+  });
+
+  if (this.canNavigateToPreviousMonth()) {
+    this.prevNavEl.classList.remove('is-disabled');
+  } else {
+    this.prevNavEl.classList.add('is-disabled');
+  }
+
+  if (this.canNavigateToNextMonth()) {
+    this.nextNavEl.classList.remove('is-disabled');
+  } else {
+    this.nextNavEl.classList.add('is-disabled');
+  }
+
+};
+
+//-------------------------------------------------------------------------------
+
+/**
+ * Select today and render todays month
+ * @return {Calendar}
+ */
+Calendar.prototype.today = function() {
+  this.view();
+  this.select(moment());
   return this;
 };
 
@@ -351,6 +426,7 @@ Calendar.prototype.renderBody = function() {
  * @return {Calendar}
  */
 Calendar.prototype.render = function() {
+  this.renderNavigation();
   this.renderBody();
   this.renderTitle();
   return this;

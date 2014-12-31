@@ -1,3 +1,4 @@
+var moment = require('moment');
 var assert = require('assert');
 var Calendar = require('calendar');
 
@@ -43,7 +44,67 @@ describe('Calendar', function() {
 
   });
 
-  describe('.render()', function() {
+  describe('.next()', function() {
+
+    it('should navigate to next month', function() {
+      var calendar  = new Calendar();
+      var title     = calendar.el.querySelector('.js-title');
+
+      var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
+      assert.equal(title.textContent, moment().format(calendar.titleFormat)); //title
+      assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).format('YYYY-MM-DD')); //day
+
+      calendar.next();
+
+      var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
+      assert.equal(title.textContent, moment().date(1).add(1, 'month').format(calendar.titleFormat)); //title
+      assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).add(1, 'month').format('YYYY-MM-DD')); //day
+
+    });
+
+  });
+
+  describe('.previous()', function() {
+
+    it('should navigate to previous month', function() {
+      var calendar  = new Calendar();
+      var title     = calendar.el.querySelector('.js-title');
+
+      var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
+      assert.equal(title.textContent, moment().format(calendar.titleFormat)); //title
+      assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).format('YYYY-MM-DD')); //day
+
+      calendar.previous();
+
+      var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
+      assert.equal(title.textContent, moment().date(1).subtract(1, 'month').format(calendar.titleFormat)); //title
+      assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).subtract(1, 'month').format('YYYY-MM-DD')); //day
+
+    });
+
+  });
+
+  describe('.renderNavigation()', function() {
+
+    it('when I can navigate next the calendar should not remain on the same month', function() {
+
+    });
+
+    it('when I can not navigate next the calendar should remain on the same month', function() {
+
+    });
+
+    it('when I can navigate previous the calendar should not remain on the same month', function() {
+
+    });
+
+    it('when I can not navigate previous the calendar should remain on the same month', function() {
+
+    });
+
+  });
+
+  describe('.renderBody()', function() {
 
     it('should add .is-disabled class when I override the .isDayDisabled() method', function() {
       var calendar = Calendar();
@@ -80,17 +141,5 @@ describe('Calendar', function() {
     });
 
   });
-
-  describe('next month btn', function() {
-
-    it('should navigate to next month', function() {
-
-    });
-
-    it('should navigate to previous month', function() {
-
-    });
-
-  })
 
 });

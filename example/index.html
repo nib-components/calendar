@@ -19,8 +19,21 @@
         var moment = require('moment');
         var Calendar = require('calendar');
 
-        var calendar = new Calendar();
-        calendar.select(null)
+        var calendar = new Calendar({
+            prevMonthNavClass: 'v2-icon v2-icon--smallest v2-icon--chevron-circle-inverse v2-icon--rotate-180',
+            nextMonthNavClass: 'v2-icon v2-icon--smallest v2-icon--chevron-circle-inverse'
+        });
+
+        //test
+        calendar.select(null);
+
+        calendar.canNavigateToNextMonth = function() {
+          return false;
+        };
+
+        calendar.canNavigateToPreviousMonth = function() {
+            return false;
+        };
 
         //disable weekends
         calendar.isDayDisabled = function(day) {

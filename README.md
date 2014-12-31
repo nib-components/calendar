@@ -15,6 +15,30 @@ Create a simple calendar.
 
 ## API
 
+### .previous()
+
+Update the calendar to display the days in the month before the current month.
+
+### .next()
+
+Update the calendar to display the days in the month after the current month.
+
+### .canNavigateToPreviousMonth() : Boolean
+
+Check whether the user can navigate to the previous month. Default implementation always returns `true`. Can be overridden to prevent navigation.
+
+### .canNavigateToNextMonth() : Boolean
+
+Check whether the user can navigate to the next month. Default implementation always returns `true`. Can be overridden to prevent navigation.
+
+### .view(date : Moment)
+
+Update the calendar to display the days in the month containing the specified date.
+
+### .select(date : Moment|null)
+
+Select the specified date and update the calendar to display the days in the month containing the specified date.
+
 ### .date() : String|null
 
 Get the selected date formatted as per `Calendar.prototype.format`.
@@ -22,22 +46,6 @@ Get the selected date formatted as per `Calendar.prototype.format`.
 ### .moment() : Moment|null
 
 Get the selected date as a MomentJS object.
-
-### .view(date : Moment)
-
-Update the calendar to display the days in the month containing the specified date.
-
-### .next()
-
-Update the calendar to display the days in the month after the current month.
-
-### .previous()
-
-Update the calendar to display the days in the month before the current month.
-
-### .select(date : Moment|null)
-
-Select the specified date and update the calendar to display the days in the month containing the specified date.
 
 ### .isDayDisabled(date : Moment)
 
