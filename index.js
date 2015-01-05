@@ -21,6 +21,7 @@ function Calendar(options) {
   //override defaults from options
   this.prevMonthNavClass = options.prevMonthNavClass || this.prevMonthNavClass;
   this.nextMonthNavClass = options.nextMonthNavClass || this.nextMonthNavClass;
+  this.titleFormat = options.titleFormat || this.titleFormat;
 
   this.el = domify(template);
   delegate.bind(this.el, '.js-next', 'click', this.next.bind(this));
