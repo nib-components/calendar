@@ -22,6 +22,7 @@ function Calendar(options) {
   this.prevMonthNavClass = options.prevMonthNavClass || this.prevMonthNavClass;
   this.nextMonthNavClass = options.nextMonthNavClass || this.nextMonthNavClass;
   this.titleFormat = options.titleFormat || this.titleFormat;
+  this.titleDayOfWeekFormat = options.titleDayOfWeekFormat || this.titleDayOfWeekFormat;
 
   this.el = domify(template);
   delegate.bind(this.el, '.js-next', 'click', this.next.bind(this));
@@ -82,6 +83,12 @@ Calendar.prototype.nextMonthNavClass = 'icon-circle-arrow icon--light icon--righ
 Calendar.prototype.titleFormat = 'MMMM YYYY';
 
 /**
+ * Format for the day-of-week title of the calendar
+ * @type {String}
+ */
+Calendar.prototype.titleDayOfWeekFormat = null;
+
+/**
  * Format of the day returned when calling this.date()
  * @type {String}
  */
@@ -118,7 +125,7 @@ Calendar.prototype.current = null;
  * @returns {Boolean}
  */
 Calendar.prototype.canNavigateToPreviousMonth = function() {
-    return true;
+  return true;
 };
 
 /**
@@ -330,6 +337,18 @@ Calendar.prototype.renderDay = function(data) {
 Calendar.prototype.renderTitle = function() {
   var title = this.current.format(this.titleFormat);
   this.title.textContent = title;
+
+  if (this.titleDayOfWeekFormat) {
+    var currentDay = moment();
+    currentDay.startOf('week');
+    var titleDayOfWeekElements = this.el.querySelectorAll('.calendar__day-of-week');
+
+    for (var i = 0; i < 7; i++) {
+      titleDayOfWeekElements[i].innerHTML = currentDay.format(this.titleDayOfWeekFormat);
+      currentDay.add('day', 1);
+    }
+  }
+
   return this;
 };
 
@@ -366,7 +385,7 @@ Calendar.prototype.isDayInPrevMonth = function(day) {
     cmonth  = moment(this.current).month(),
     dyear   = moment(day).year(),
     dmonth  = moment(day).month()
-  ;
+    ;
 
   if (dyear === (cyear-1) && dmonth === 11 && cmonth === 0) {
     return true;
@@ -387,7 +406,7 @@ Calendar.prototype.isDayInNextMonth = function(day) {
     cmonth  = moment(this.current).month(),
     dyear   = moment(day).year(),
     dmonth  = moment(day).month()
-  ;
+    ;
 
   //check the year
   if (dyear-cyear < 0 || dyear-cyear > 1) {
