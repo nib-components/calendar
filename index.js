@@ -258,7 +258,7 @@ Calendar.prototype.moment = function() {
  * Get the currently viewed month as a moment object
  * @return {Moment}
  */
-Calendar.prototype.current = function() {
+Calendar.prototype.getCurrent = function() {
   return this.current;
 };
 
