@@ -345,7 +345,7 @@ Calendar.prototype.renderTitle = function() {
 
     for (var i = 0; i < 7; i++) {
       titleDayOfWeekElements[i].innerHTML = currentDay.format(this.titleDayOfWeekFormat);
-      currentDay.add('day', 1);
+      currentDay.add(1, 'day');
     }
   }
 
