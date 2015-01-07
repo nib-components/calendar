@@ -62,6 +62,8 @@ Calendar.prototype.selectedClass = 'is-selected';
  */
 Calendar.prototype.todayClass = 'is-today';
 
+Calendar.prototype.dayTestClassFormat = 't-calendar-day-';
+
 /**
  * Class given to disabled days. These are days
  * that are rendered on calendar but aren't in
@@ -319,6 +321,8 @@ Calendar.prototype.getStartDate = function(date) {
 Calendar.prototype.renderDay = function(data) {
   var day = domify('<span />');
   day.classList.add('calendar__day');
+  day.classList.add(this.dayTestClassFormat + data.day);
+
   if (data.isSelected) day.classList.add(this.selectedClass);
   if (data.isDisabled) day.classList.add(this.disabledClass);
   if (data.isToday) day.classList.add(this.todayClass);
