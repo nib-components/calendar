@@ -57,6 +57,12 @@ emitter(Calendar.prototype);
 Calendar.prototype.selectedClass = 'is-selected';
 
 /**
+ * Test class given to the selected day element
+ * @type {String}
+ */
+Calendar.prototype.selectedTestClass = 't-is-selected';
+
+/**
  * Class given to the element for today
  * @type {String}
  */
@@ -323,7 +329,10 @@ Calendar.prototype.renderDay = function(data) {
   day.classList.add('calendar__day');
   day.classList.add(this.dayTestClassFormat + data.day);
 
-  if (data.isSelected) day.classList.add(this.selectedClass);
+  if (data.isSelected) {
+    day.classList.add(this.selectedClass);
+    day.classList.add(this.selectedTestClass);
+  }
   if (data.isDisabled) day.classList.add(this.disabledClass);
   if (data.isToday) day.classList.add(this.todayClass);
   if (data.isInPrevMonth) day.classList.add(this.prevMonthClass);
