@@ -341,6 +341,7 @@ Calendar.prototype.renderDay = function(data) {
 Calendar.prototype.renderTitle = function() {
   var title = this.current.format(this.titleFormat);
   this.title.textContent = title;
+  this.title.classList.add('t-calendar-month');
 
   if (this.titleDayOfWeekFormat) {
     var currentDay = moment();
