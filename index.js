@@ -337,10 +337,12 @@ Calendar.prototype.renderDay = function(data) {
     day.classList.add(this.selectedClass);
     day.classList.add(this.selectedTestClass);
   }
+
   if (data.isDisabled) day.classList.add(this.disabledClass);
   if (data.isToday) day.classList.add(this.todayClass);
   if (data.isInPrevMonth) day.classList.add(this.prevMonthClass);
   if (data.isInNextMonth) day.classList.add(this.nextMonthClass);
+
   day.setAttribute('data-date', data.date);
   day.classList.add('js-select');
   day.textContent = data.day;
@@ -449,7 +451,7 @@ Calendar.prototype.renderBody = function() {
   for (var i = 0; i <= 41; i++) {
     fragment.appendChild(this.renderDay({
       day:            current.date(),
-      date:           current.format(),
+      date:           current.startOf('day').format(),
       isToday:        this.isSameDay(current, today),
       isInPrevMonth:  this.isDayInPrevMonth(current),
       isInNextMonth:  this.isDayInNextMonth(current),
