@@ -155,6 +155,8 @@ Calendar.prototype.previous = function() {
   }
 
   this.view(moment(this.current).subtract(1, 'months'));
+  this.emit('showPreviousMonth');
+
   return this;
 };
 
@@ -169,6 +171,8 @@ Calendar.prototype.next = function() {
   }
 
   this.view(moment(this.current).add(1, 'months'));
+  this.emit('showNextMonth');
+
   return this;
 };
 
