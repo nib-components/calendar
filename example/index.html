@@ -10,6 +10,16 @@
             opacity: 1;
         }
 
+        .calendar__back.is-disabled,
+        .calendar__forward.is-disabled {
+            cursor: default;
+            opacity: 0.5;
+        }
+
+        .calendar__days .calendar__day.is-disabled {
+            background-color: lightpink;
+        }
+
     </style>
 </head>
 <body>
@@ -20,19 +30,21 @@
         var Calendar = require('calendar');
 
         var calendar = new Calendar({
-            prevMonthNavClass: 'v2-icon v2-icon--smallest v2-icon--chevron-circle-inverse v2-icon--rotate-180',
-            nextMonthNavClass: 'v2-icon v2-icon--smallest v2-icon--chevron-circle-inverse'
+            monthFormat:        'MMMM',
+            dayOfWeekFormat:    'ddd',
+            prevMonthNavClass:  'v2-icon v2-icon--smallest v2-icon--chevron-circle-inverse v2-icon--rotate-180',
+            nextMonthNavClass:  'v2-icon v2-icon--smallest v2-icon--chevron-circle-inverse'
         });
 
         //test
-        calendar.select(null);
-
-        calendar.canNavigateToNextMonth = function() {
-          return false;
-        };
+        //calendar.select(null);
 
         calendar.canNavigateToPreviousMonth = function() {
             return false;
+        };
+
+        calendar.canNavigateToNextMonth = function() {
+            return true;
         };
 
         //disable weekends

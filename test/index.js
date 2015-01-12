@@ -51,13 +51,13 @@ describe('Calendar', function() {
       var title     = calendar.el.querySelector('.js-title');
 
       var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
-      assert.equal(title.textContent, moment().format(calendar.titleFormat)); //title
+      assert.equal(title.textContent, moment().format(calendar.monthFormat)); //title
       assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).format('YYYY-MM-DD')); //day
 
       calendar.next();
 
       var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
-      assert.equal(title.textContent, moment().date(1).add(1, 'month').format(calendar.titleFormat)); //title
+      assert.equal(title.textContent, moment().date(1).add(1, 'month').format(calendar.monthFormat)); //title
       assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).add(1, 'month').format('YYYY-MM-DD')); //day
 
     });
@@ -71,13 +71,13 @@ describe('Calendar', function() {
       var title     = calendar.el.querySelector('.js-title');
 
       var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
-      assert.equal(title.textContent, moment().format(calendar.titleFormat)); //title
+      assert.equal(title.textContent, moment().format(calendar.monthFormat)); //title
       assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).format('YYYY-MM-DD')); //day
 
       calendar.previous();
 
       var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
-      assert.equal(title.textContent, moment().date(1).subtract(1, 'month').format(calendar.titleFormat)); //title
+      assert.equal(title.textContent, moment().date(1).subtract(1, 'month').format(calendar.monthFormat)); //title
       assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).subtract(1, 'month').format('YYYY-MM-DD')); //day
 
     });

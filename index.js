@@ -19,10 +19,10 @@ function Calendar(options) {
   options = options || {};
 
   //override defaults from options
-  this.prevMonthNavClass = options.prevMonthNavClass || this.prevMonthNavClass;
-  this.nextMonthNavClass = options.nextMonthNavClass || this.nextMonthNavClass;
-  this.titleFormat = options.titleFormat || this.titleFormat;
-  this.titleDayOfWeekFormat = options.titleDayOfWeekFormat || this.titleDayOfWeekFormat;
+  this.monthFormat        = options.monthFormat || this.monthFormat;
+  this.dayOfWeekFormat    = options.dayOfWeekFormat || this.dayOfWeekFormat;
+  this.prevMonthNavClass  = options.prevMonthNavClass || this.prevMonthNavClass;
+  this.nextMonthNavClass  = options.nextMonthNavClass || this.nextMonthNavClass;
 
   this.el = domify(template);
   delegate.bind(this.el, '.js-next', 'click', this.next.bind(this));
@@ -30,17 +30,14 @@ function Calendar(options) {
   delegate.bind(this.el, '.js-today', 'click', this.today.bind(this));
   delegate.bind(this.el, '.js-select', 'click', this.onSelect.bind(this));
 
-  this.prevNavEl = this.el.querySelector('.js-previous');
-  this.nextNavEl = this.el.querySelector('.js-next');
+  this.prevNavElement     = this.el.querySelector('.js-previous');
+  this.nextNavElement     = this.el.querySelector('.js-next');
 
-  this.title = this.el.querySelector(this.titleSelector);
-  this.body = this.el.querySelector(this.bodySelector);
+  this.monthElement       = this.el.querySelector(this.monthSelector);
+  this.dayOfWeekElements  = this.el.querySelectorAll('.js-day-of-week');
+  this.body               = this.el.querySelector(this.bodySelector);
+
   this.current = this.selected = moment();
-
-  this.on('next', this.next);
-  this.on('previous', this.previous);
-  this.on('today', this.today);
-  this.on('onSelect', this.onSelect);
 
   this.render();
 }
@@ -85,16 +82,16 @@ Calendar.prototype.prevMonthNavClass = 'icon-circle-arrow icon--light icon--left
 Calendar.prototype.nextMonthNavClass = 'icon-circle-arrow icon--light icon--right';
 
 /**
- * Format for the title of the calendar
+ * Format for the month of the calendar
  * @type {String}
  */
-Calendar.prototype.titleFormat = 'MMMM YYYY';
+Calendar.prototype.monthFormat = 'MMMM YYYY';
 
 /**
- * Format for the day-of-week title of the calendar
+ * Format for the day-of-week of the calendar
  * @type {String}
  */
-Calendar.prototype.titleDayOfWeekFormat = null;
+Calendar.prototype.dayOfWeekFormat = null;
 
 /**
  * Format of the day returned when calling this.date()
@@ -103,10 +100,10 @@ Calendar.prototype.titleDayOfWeekFormat = null;
 Calendar.prototype.format = null;
 
 /**
- * Selector that matches the element for the calendar title
+ * Selector that matches the element for the calendar month
  * @type {String}
  */
-Calendar.prototype.titleSelector = '.js-title';
+Calendar.prototype.monthSelector = '.js-month';
 
 /**
  * Selector that matches the body of the calendar
@@ -183,23 +180,23 @@ Calendar.prototype.renderNavigation = function() {
   var self = this;
 
   this.prevMonthNavClass.split(' ').forEach(function(className) {
-    self.prevNavEl.classList.add(className);
+    self.prevNavElement.classList.add(className);
   });
 
   this.nextMonthNavClass.split(' ').forEach(function(className) {
-    self.nextNavEl.classList.add(className);
+    self.nextNavElement.classList.add(className);
   });
 
   if (this.canNavigateToPreviousMonth()) {
-    this.prevNavEl.classList.remove('is-disabled');
+    this.prevNavElement.classList.remove('is-disabled');
   } else {
-    this.prevNavEl.classList.add('is-disabled');
+    this.prevNavElement.classList.add('is-disabled');
   }
 
   if (this.canNavigateToNextMonth()) {
-    this.nextNavEl.classList.remove('is-disabled');
+    this.nextNavElement.classList.remove('is-disabled');
   } else {
-    this.nextNavEl.classList.add('is-disabled');
+    this.nextNavElement.classList.add('is-disabled');
   }
 
 };
@@ -316,8 +313,7 @@ Calendar.prototype.getStartDate = function(date) {
 
   if( inactiveBeforeDays >= 0 ) {
     return moment(lastMonth).date( daysInLastMonth - inactiveBeforeDays );
-  }
-  else {
+  } else {
     return moment(date).date(1);
   }
 };
@@ -350,23 +346,23 @@ Calendar.prototype.renderDay = function(data) {
 };
 
 /**
- * Get the calendar title
- * @return {[type]} [description]
+ * Render the calendar header
  */
 Calendar.prototype.renderTitle = function() {
-  var title = this.current.format(this.titleFormat);
-  this.title.textContent = title;
-  this.title.classList.add('t-calendar-month');
+  var month = this.current.format(this.monthFormat);
+  this.monthElement.textContent = month;
+  this.monthElement.classList.add('t-calendar-month');
 
-  if (this.titleDayOfWeekFormat) {
+  if (this.dayOfWeekFormat) {
+
     var currentDay = moment();
     currentDay.startOf('week');
-    var titleDayOfWeekElements = this.el.querySelectorAll('.calendar__day-of-week');
 
     for (var i = 0; i < 7; i++) {
-      titleDayOfWeekElements[i].innerHTML = currentDay.format(this.titleDayOfWeekFormat);
+      this.dayOfWeekElements[i].innerHTML = currentDay.format(this.dayOfWeekFormat);
       currentDay.add(1, 'day');
     }
+
   }
 
   return this;
