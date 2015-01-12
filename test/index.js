@@ -4,6 +4,17 @@ var Calendar = require('calendar');
 
 describe('Calendar', function() {
 
+  describe('new Calendar()', function() {
+
+    it('today should be selected', function() {
+      assert.equal(Calendar().moment().startOf('day').unix(), moment().startOf('day').unix());
+    })
+
+    it('null should be selected', function() {
+      assert.equal(Calendar({selectTodayByDefault:false}).date(), null);
+    })
+  });
+
   describe('.isDayInNextMonth()', function() {
 
     it('should always be false', function() {
@@ -81,6 +92,10 @@ describe('Calendar', function() {
       assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).subtract(1, 'month').format('YYYY-MM-DD')); //day
 
     });
+
+  });
+
+  describe('.renderTitle()', function() {
 
   });
 

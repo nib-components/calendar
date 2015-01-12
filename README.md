@@ -74,3 +74,4 @@ Check whether a date is disabled according to the calendar. Default implementati
 ## Notes
 
  - requires shims for HTMLElement.classList in IE<9
+ - does not return dates at the start of the day, maybe it should get rid of the times from the dates?
