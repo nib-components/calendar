@@ -48,7 +48,7 @@ describe('Calendar', function() {
 
     it('should navigate to next month', function() {
       var calendar  = new Calendar();
-      var title     = calendar.el.querySelector('.js-title');
+      var title     = calendar.el.querySelector('.js-month');
 
       var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
       assert.equal(title.textContent, moment().format(calendar.monthFormat)); //title
@@ -68,7 +68,7 @@ describe('Calendar', function() {
 
     it('should navigate to previous month', function() {
       var calendar  = new Calendar();
-      var title     = calendar.el.querySelector('.js-title');
+      var title     = calendar.el.querySelector('.js-month');
 
       var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
       assert.equal(title.textContent, moment().format(calendar.monthFormat)); //title

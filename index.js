@@ -37,7 +37,11 @@ function Calendar(options) {
   this.dayOfWeekElements  = this.el.querySelectorAll('.js-day-of-week');
   this.body               = this.el.querySelector(this.bodySelector);
 
-  this.current = this.selected = moment();
+  if (typeof(options.selectTodayByDefault) === 'undefined' || options.selectTodayByDefault) {
+    this.current = this.selected = moment();
+  } else {
+    this.current = moment();
+  }
 
   this.render();
 }

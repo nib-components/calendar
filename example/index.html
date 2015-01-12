@@ -30,19 +30,19 @@
         var Calendar = require('calendar');
 
         var calendar = new Calendar({
-            monthFormat:        'MMMM',
-            dayOfWeekFormat:    'ddd',
-            prevMonthNavClass:  'v2-icon v2-icon--smallest v2-icon--chevron-circle-inverse v2-icon--rotate-180',
-            nextMonthNavClass:  'v2-icon v2-icon--smallest v2-icon--chevron-circle-inverse'
+            selectTodayByDefault:   false,
+            monthFormat:            'MMMM',
+            dayOfWeekFormat:        'ddd',
+            prevMonthNavClass:      'v2-icon v2-icon--smallest v2-icon--chevron-circle-inverse v2-icon--rotate-180',
+            nextMonthNavClass:      'v2-icon v2-icon--smallest v2-icon--chevron-circle-inverse'
         });
 
-        //test
-        //calendar.select(null);
-
+        //disable going backward
         calendar.canNavigateToPreviousMonth = function() {
             return false;
         };
 
+        //enable going forward
         calendar.canNavigateToNextMonth = function() {
             return true;
         };

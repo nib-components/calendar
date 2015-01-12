@@ -21,6 +21,8 @@ Create a simple calendar.
 
 Options:
 
+ - selectTodayByDefault - Prevents today being selected by default leaving `selected=null` without having to call `.select(null)` which fires the select event
+
  - monthFormat - Format of the month displayed to the user in the header
  - dayOfWeekFormat - Format of the day-of-the week displayed to the user in the header
 
