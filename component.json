@@ -1,6 +1,17 @@
 {
   "name": "calendar",
   "description": "Calendar that allows selecting dates and emits events",
-  "version": "0.0.3",
-  "scripts": ["index.js", "template.js"]
+  "version": "0.1.0",
+  "scripts": ["index.js", "template.js"],
+  "dependencies": {
+    "moment/moment": "~2.8.4",
+    "component/domify": "~1.3.1",
+    "component/delegate": "~0.2.3",
+    "component/emitter": "~1.1.3"
+  },
+  "development": {
+    "dependencies": {
+      "nib-styles/calendar": "*"
+    }
+  }
 }

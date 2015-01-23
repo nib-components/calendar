@@ -1,22 +1,37 @@
+var moment = require('moment');
+var domify = require('domify');
+var delegate = require('delegate');
+var emitter = require('emitter');
 var template = require('./template');
 
-function Calendar(options) {
-  _.bindAll(this, 'next', 'previous', 'today', 'onSelect');
-  this.el = $(template);
-  this.el.on('click', '.js-next', this.next);
-  this.el.on('click', '.js-previous', this.previous);
-  this.el.on('click', '.js-today', this.today);
-  this.el.on('click', '.js-select', this.onSelect);
-  this.title = this.el.find(this.titleSelector);
-  this.body = this.el.find(this.bodySelector);
+function Calendar() {
+
+  if (!(this instanceof Calendar)) {
+    return new Calendar();
+  }
+
+  this.el = domify(template);
+  delegate.bind(this.el, '.js-next', 'click', this.next.bind(this));
+  delegate.bind(this.el, '.js-previous', 'click', this.previous.bind(this));
+  delegate.bind(this.el, '.js-today', 'click', this.today.bind(this));
+  delegate.bind(this.el, '.js-select', 'click', this.onSelect.bind(this));
+
+  this.title = this.el.querySelector(this.titleSelector);
+  this.body = this.el.querySelector(this.bodySelector);
   this.current = this.selected = moment();
+
+  this.on('next', this.next);
+  this.on('previous', this.previous);
+  this.on('today', this.today);
+  this.on('onSelect', this.onSelect);
+
   this.render();
 }
 
 /**
  * Allows the calendar to trigger events
  */
-_.extend(Calendar.prototype, Backbone.Events);
+emitter(Calendar.prototype);
 
 /**
  * Class given to the selected day element
@@ -89,7 +104,7 @@ Calendar.prototype.today = function() {
  * @return {Calendar}
  */
 Calendar.prototype.previous = function() {
-  this.view(moment(this.current).subtract('months', 1));
+  this.view(moment(this.current).subtract(1, 'months'));
   return this;
 };
 
@@ -98,7 +113,7 @@ Calendar.prototype.previous = function() {
  * @return {Calendar}
  */
 Calendar.prototype.next = function() {
-  this.view(moment(this.current).add('months', 1));
+  this.view(moment(this.current).add(1, 'months'));
   return this;
 };
 
@@ -110,8 +125,8 @@ Calendar.prototype.next = function() {
 Calendar.prototype.select = function(date, silent) {
   this.selected = moment(date);
 
-  if( !silent ){
-    this.trigger('select', this.date(), this.moment());
+  if(!silent){
+    this.emit('select', this.date(), this.moment());
   }
 
   this.view(date);
@@ -176,7 +191,7 @@ Calendar.prototype.isSameMonth = function(a, b) {
  * @return {Moment}
  */
 Calendar.prototype.getStartDate = function(date) {
-  var lastMonth = moment(date).subtract('months', 1);
+  var lastMonth = moment(date).subtract(1, 'months');
   var daysInLastMonth = lastMonth.daysInMonth();
   var inactiveBeforeDays = moment(date).date(1).day() - 1;
 
@@ -195,14 +210,14 @@ Calendar.prototype.getStartDate = function(date) {
  * @return {Element}
  */
 Calendar.prototype.renderDay = function(data) {
-  var day = $('<span />');
-  day.toggleClass(this.selectedClass, data.isSelected);
-  day.toggleClass(this.disabledClass, data.isDisabled);
-  day.toggleClass(this.todayClass, data.isToday);
-  day.attr('data-date', data.date);
-  day.addClass('js-select');
-  day.text(data.day);
-  return day[0];
+  var day = domify('<span />');
+  if (data.isSelected) day.classList.add(this.selectedClass);
+  if (data.isDisabled) day.classList.toggle(this.disabledClass);
+  if (data.isToday) day.classList.toggle(this.todayClass);
+  day.setAttribute('data-date', data.date);
+  day.classList.add('js-select');
+  day.textContent = data.day;
+  return day;
 };
 
 /**
@@ -211,7 +226,7 @@ Calendar.prototype.renderDay = function(data) {
  */
 Calendar.prototype.renderTitle = function() {
   var title = this.current.format(this.titleFormat);
-  this.title.text(title);
+  this.title.textContent = title;
   return this;
 };
 
@@ -235,10 +250,14 @@ Calendar.prototype.renderBody = function() {
       isDisabled: !this.isSameMonth(current, this.current),
       isToday: this.isSameDay(current, today)
     }));
-    current.add('days', 1);
+    current.add(1, 'days');
   }
 
-  this.body.empty().append(fragment);
+  while (this.body.childNodes.length>0) {
+    this.body.removeChild(this.body.childNodes[0]);
+  }
+  this.body.appendChild(fragment);
+
   return this;
 };
 
@@ -271,7 +290,7 @@ Calendar.prototype.remove = function() {
  * @return {void}
  */
 Calendar.prototype.onSelect = function(event) {
-  this.select(event.currentTarget.getAttribute('data-date'));
+  this.select(event.delegateTarget.getAttribute('data-date'));
 };
 
 module.exports = Calendar;
