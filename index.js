@@ -4,11 +4,25 @@ var delegate = require('delegate');
 var emitter = require('emitter');
 var template = require('./template');
 
-function Calendar() {
+/**
+ * Create a calendar object
+ * @constructor
+ * @param   {Object} options
+ * @returns {Calendar}
+ */
+function Calendar(options) {
 
   if (!(this instanceof Calendar)) {
-    return new Calendar();
+    return new Calendar(options);
   }
+
+  options = options || {};
+
+  //override defaults from options
+  this.monthFormat        = options.monthFormat || this.monthFormat;
+  this.dayOfWeekFormat    = options.dayOfWeekFormat || this.dayOfWeekFormat;
+  this.prevMonthNavClass  = options.prevMonthNavClass || this.prevMonthNavClass;
+  this.nextMonthNavClass  = options.nextMonthNavClass || this.nextMonthNavClass;
 
   this.el = domify(template);
   delegate.bind(this.el, '.js-next', 'click', this.next.bind(this));
@@ -16,14 +30,18 @@ function Calendar() {
   delegate.bind(this.el, '.js-today', 'click', this.today.bind(this));
   delegate.bind(this.el, '.js-select', 'click', this.onSelect.bind(this));
 
-  this.title = this.el.querySelector(this.titleSelector);
-  this.body = this.el.querySelector(this.bodySelector);
-  this.current = this.selected = moment();
+  this.prevNavElement     = this.el.querySelector('.js-previous');
+  this.nextNavElement     = this.el.querySelector('.js-next');
 
-  this.on('next', this.next);
-  this.on('previous', this.previous);
-  this.on('today', this.today);
-  this.on('onSelect', this.onSelect);
+  this.monthElement       = this.el.querySelector(this.monthSelector);
+  this.dayOfWeekElements  = this.el.querySelectorAll('.js-day-of-week');
+  this.body               = this.el.querySelector(this.bodySelector);
+
+  if (typeof(options.selectTodayByDefault) === 'undefined' || options.selectTodayByDefault) {
+    this.current = this.selected = moment();
+  } else {
+    this.current = moment();
+  }
 
   this.render();
 }
@@ -40,10 +58,18 @@ emitter(Calendar.prototype);
 Calendar.prototype.selectedClass = 'is-selected';
 
 /**
+ * Test class given to the selected day element
+ * @type {String}
+ */
+Calendar.prototype.selectedTestClass = 't-is-selected';
+
+/**
  * Class given to the element for today
  * @type {String}
  */
 Calendar.prototype.todayClass = 'is-today';
+
+Calendar.prototype.dayTestClassFormat = 't-calendar-day-';
 
 /**
  * Class given to disabled days. These are days
@@ -56,12 +82,20 @@ Calendar.prototype.disabledClass = 'is-disabled';
 Calendar.prototype.prevMonthClass = 'is-prev-month';
 Calendar.prototype.nextMonthClass = 'is-next-month';
 
+Calendar.prototype.prevMonthNavClass = 'icon-circle-arrow icon--light icon--left';
+Calendar.prototype.nextMonthNavClass = 'icon-circle-arrow icon--light icon--right';
 
 /**
- * Format for the title of the calendar
+ * Format for the month of the calendar
  * @type {String}
  */
-Calendar.prototype.titleFormat = 'MMMM YYYY';
+Calendar.prototype.monthFormat = 'MMMM YYYY';
+
+/**
+ * Format for the day-of-week of the calendar
+ * @type {String}
+ */
+Calendar.prototype.dayOfWeekFormat = null;
 
 /**
  * Format of the day returned when calling this.date()
@@ -70,10 +104,10 @@ Calendar.prototype.titleFormat = 'MMMM YYYY';
 Calendar.prototype.format = null;
 
 /**
- * Selector that matches the element for the calendar title
+ * Selector that matches the element for the calendar month
  * @type {String}
  */
-Calendar.prototype.titleSelector = '.js-title';
+Calendar.prototype.monthSelector = '.js-month';
 
 /**
  * Selector that matches the body of the calendar
@@ -93,14 +127,22 @@ Calendar.prototype.selected = null;
  */
 Calendar.prototype.current = null;
 
+//-------------------------------------------------------------------------------
+
 /**
- * Select today and render todays month
- * @return {Calendar}
+ * Check whether the user can navigate to the previous month
+ * @returns {Boolean}
  */
-Calendar.prototype.today = function() {
-  this.view();
-  this.select(moment());
-  return this;
+Calendar.prototype.canNavigateToPreviousMonth = function() {
+  return true;
+};
+
+/**
+ * Check whether the user can navigate to the previous month
+ * @returns {Boolean}
+ */
+Calendar.prototype.canNavigateToNextMonth = function() {
+  return true;
 };
 
 /**
@@ -108,7 +150,14 @@ Calendar.prototype.today = function() {
  * @return {Calendar}
  */
 Calendar.prototype.previous = function() {
+
+  if (!this.canNavigateToPreviousMonth()) {
+    return this;
+  }
+
   this.view(moment(this.current).subtract(1, 'months'));
+  this.emit('previous');
+
   return this;
 };
 
@@ -117,7 +166,54 @@ Calendar.prototype.previous = function() {
  * @return {Calendar}
  */
 Calendar.prototype.next = function() {
+
+  if (!this.canNavigateToNextMonth()) {
+    return this;
+  }
+
   this.view(moment(this.current).add(1, 'months'));
+  this.emit('next');
+
+  return this;
+};
+
+/**
+ * Update the visual state of the calendar navigation
+ */
+Calendar.prototype.renderNavigation = function() {
+  var self = this;
+
+  this.prevMonthNavClass.split(' ').forEach(function(className) {
+    self.prevNavElement.classList.add(className);
+  });
+
+  this.nextMonthNavClass.split(' ').forEach(function(className) {
+    self.nextNavElement.classList.add(className);
+  });
+
+  if (this.canNavigateToPreviousMonth()) {
+    this.prevNavElement.classList.remove('is-disabled');
+  } else {
+    this.prevNavElement.classList.add('is-disabled');
+  }
+
+  if (this.canNavigateToNextMonth()) {
+    this.nextNavElement.classList.remove('is-disabled');
+  } else {
+    this.nextNavElement.classList.add('is-disabled');
+  }
+
+};
+
+//-------------------------------------------------------------------------------
+
+/**
+ * Select today and render todays month
+ * @return {Calendar}
+ */
+Calendar.prototype.today = function() {
+  this.view();
+  this.select(moment());
   return this;
 };
 
@@ -180,6 +276,14 @@ Calendar.prototype.moment = function() {
 };
 
 /**
+ * Get the currently viewed month as a moment object
+ * @return {Moment}
+ */
+Calendar.prototype.getCurrent = function() {
+  return this.current;
+};
+
+/**
  * Check if 2 dates are actually the same day
  * @param  {Moment}  a
  * @param  {Moment}  b
@@ -213,8 +317,7 @@ Calendar.prototype.getStartDate = function(date) {
 
   if( inactiveBeforeDays >= 0 ) {
     return moment(lastMonth).date( daysInLastMonth - inactiveBeforeDays );
-  }
-  else {
+  } else {
     return moment(date).date(1);
   }
 };
@@ -228,11 +331,18 @@ Calendar.prototype.getStartDate = function(date) {
 Calendar.prototype.renderDay = function(data) {
   var day = domify('<span />');
   day.classList.add('calendar__day');
-  if (data.isSelected) day.classList.add(this.selectedClass);
+  day.classList.add(this.dayTestClassFormat + data.day);
+
+  if (data.isSelected) {
+    day.classList.add(this.selectedClass);
+    day.classList.add(this.selectedTestClass);
+  }
+
   if (data.isDisabled) day.classList.add(this.disabledClass);
   if (data.isToday) day.classList.add(this.todayClass);
   if (data.isInPrevMonth) day.classList.add(this.prevMonthClass);
   if (data.isInNextMonth) day.classList.add(this.nextMonthClass);
+
   day.setAttribute('data-date', data.date);
   day.classList.add('js-select');
   day.textContent = data.day;
@@ -240,12 +350,25 @@ Calendar.prototype.renderDay = function(data) {
 };
 
 /**
- * Get the calendar title
- * @return {[type]} [description]
+ * Render the calendar header
  */
 Calendar.prototype.renderTitle = function() {
-  var title = this.current.format(this.titleFormat);
-  this.title.textContent = title;
+  var month = this.current.format(this.monthFormat);
+  this.monthElement.textContent = month;
+  this.monthElement.classList.add('t-calendar-month');
+
+  if (this.dayOfWeekFormat) {
+
+    var currentDay = moment();
+    currentDay.startOf('week');
+
+    for (var i = 0; i < 7; i++) {
+      this.dayOfWeekElements[i].innerHTML = currentDay.format(this.dayOfWeekFormat);
+      currentDay.add(1, 'day');
+    }
+
+  }
+
   return this;
 };
 
@@ -282,7 +405,7 @@ Calendar.prototype.isDayInPrevMonth = function(day) {
     cmonth  = moment(this.current).month(),
     dyear   = moment(day).year(),
     dmonth  = moment(day).month()
-  ;
+    ;
 
   if (dyear === (cyear-1) && dmonth === 11 && cmonth === 0) {
     return true;
@@ -303,7 +426,7 @@ Calendar.prototype.isDayInNextMonth = function(day) {
     cmonth  = moment(this.current).month(),
     dyear   = moment(day).year(),
     dmonth  = moment(day).month()
-  ;
+    ;
 
   //check the year
   if (dyear-cyear < 0 || dyear-cyear > 1) {
@@ -328,7 +451,7 @@ Calendar.prototype.renderBody = function() {
   for (var i = 0; i <= 41; i++) {
     fragment.appendChild(this.renderDay({
       day:            current.date(),
-      date:           current.format(),
+      date:           current.startOf('day').format(),
       isToday:        this.isSameDay(current, today),
       isInPrevMonth:  this.isDayInPrevMonth(current),
       isInNextMonth:  this.isDayInNextMonth(current),
@@ -351,6 +474,7 @@ Calendar.prototype.renderBody = function() {
  * @return {Calendar}
  */
 Calendar.prototype.render = function() {
+  this.renderNavigation();
   this.renderBody();
   this.renderTitle();
   return this;

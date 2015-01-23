@@ -1,7 +1,19 @@
+var moment = require('moment');
 var assert = require('assert');
 var Calendar = require('calendar');
 
 describe('Calendar', function() {
+
+  describe('new Calendar()', function() {
+
+    it('today should be selected', function() {
+      assert.equal(Calendar().moment().startOf('day').unix(), moment().startOf('day').unix());
+    })
+
+    it('null should be selected', function() {
+      assert.equal(Calendar({selectTodayByDefault:false}).date(), null);
+    })
+  });
 
   describe('.isDayInNextMonth()', function() {
 
@@ -43,7 +55,135 @@ describe('Calendar', function() {
 
   });
 
-  describe('.render()', function() {
+  describe('.next()', function() {
+
+    it('should navigate to the next month', function() {
+      var calendar  = new Calendar();
+      var title     = calendar.el.querySelector('.js-month');
+
+      var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
+      assert.equal(calendar.getCurrent().startOf('month').startOf('day').unix(), moment().startOf('month').startOf('day').unix());
+      assert.equal(title.textContent, moment().format(calendar.monthFormat)); //title
+      assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).format('YYYY-MM-DD')); //day
+
+      calendar.next();
+
+      var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
+      assert.equal(calendar.getCurrent().startOf('month').startOf('day').unix(), moment().add(1, 'month').startOf('month').startOf('day').unix());
+      assert.equal(title.textContent, moment().date(1).add(1, 'month').format(calendar.monthFormat)); //title
+      assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).add(1, 'month').format('YYYY-MM-DD')); //day
+
+    });
+
+    it('should not navigate to the next month when navigation is disabled', function() {
+      var calendar  = new Calendar();
+      var title     = calendar.el.querySelector('.js-month');
+
+      calendar.canNavigateToNextMonth = function() {
+        return false;
+      };
+
+      var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
+      assert.equal(calendar.getCurrent().startOf('month').startOf('day').unix(), moment().startOf('month').startOf('day').unix());
+      assert.equal(title.textContent, moment().format(calendar.monthFormat)); //title
+      assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).format('YYYY-MM-DD')); //day
+
+      calendar.next();
+
+      var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
+      assert.equal(calendar.getCurrent().startOf('month').startOf('day').unix(), moment().startOf('month').startOf('day').unix());
+      assert.equal(title.textContent, moment().date(1).format(calendar.monthFormat)); //title
+      assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).format('YYYY-MM-DD')); //day
+
+    });
+
+    it('should emit an event', function(cb) {
+
+      Calendar()
+        .on('next', function() {
+          cb();
+        })
+        .next()
+      ;
+
+    });
+
+  });
+
+  describe('.previous()', function() {
+
+    it('should navigate to previous month', function() {
+      var calendar  = new Calendar();
+      var title     = calendar.el.querySelector('.js-month');
+
+      var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
+      assert.equal(calendar.getCurrent().startOf('month').startOf('day').unix(), moment().startOf('month').startOf('day').unix());
+      assert.equal(title.textContent, moment().format(calendar.monthFormat)); //title
+      assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).format('YYYY-MM-DD')); //day
+
+      calendar.previous();
+
+      var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
+      assert.equal(calendar.getCurrent().startOf('month').startOf('day').unix(), moment().subtract(1, 'month').startOf('month').startOf('day').unix());
+      assert.equal(title.textContent, moment().date(1).subtract(1, 'month').format(calendar.monthFormat)); //title
+      assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).subtract(1, 'month').format('YYYY-MM-DD')); //day
+
+    });
+
+    it('should not navigate to previous month when navigation is disabled', function() {
+      var calendar  = new Calendar();
+      var title     = calendar.el.querySelector('.js-month');
+
+      calendar.canNavigateToPreviousMonth = function() {
+        return false;
+      };
+
+      var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
+      assert.equal(calendar.getCurrent().startOf('month').startOf('day').unix(), moment().startOf('month').startOf('day').unix());
+      assert.equal(title.textContent, moment().format(calendar.monthFormat)); //title
+      assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).format('YYYY-MM-DD')); //day
+
+      calendar.previous();
+
+      var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
+      assert.equal(calendar.getCurrent().startOf('month').startOf('day').unix(), moment().startOf('month').startOf('day').unix());
+      assert.equal(title.textContent, moment().date(1).format(calendar.monthFormat)); //title
+      assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).format('YYYY-MM-DD')); //day
+
+    });
+
+    it('should emit an event', function(cb) {
+
+      Calendar()
+        .on('previous', function() {
+          cb();
+        })
+        .previous()
+      ;
+
+    });
+
+  });
+
+  describe('.renderTitle()', function() {
+
+    it('should display the current month', function() {
+      var calendar  = new Calendar();
+      var title     = calendar.el.querySelector('.js-month');
+
+      var day = calendar.el.querySelector('.calendar__day:nth-child(14)');
+      assert.equal(title.textContent, moment().format(calendar.monthFormat)); //title
+      assert.equal(moment(day.getAttribute('data-date'), calendar.format).date(1).format('YYYY-MM-DD'), moment().date(1).format('YYYY-MM-DD')); //day
+
+    });
+
+  });
+
+  describe('.renderNavigation()', function() {
+
+  });
+
+  describe('.renderBody()', function() {
 
     it('should add .is-disabled class when I override the .isDayDisabled() method', function() {
       var calendar = Calendar();
@@ -80,17 +220,5 @@ describe('Calendar', function() {
     });
 
   });
-
-  describe('next month btn', function() {
-
-    it('should navigate to next month', function() {
-
-    });
-
-    it('should navigate to previous month', function() {
-
-    });
-
-  })
 
 });
