@@ -5,22 +5,34 @@
     <title>Calendar Example</title>
     <link href="../build/build.css" rel="stylesheet"/>
     <style>
+
         .calendar {
             opacity: 1;
         }
+
+        .calendar .is-prev-month,
+        .calendar .is-next-month {
+            color: #b9b9b9;
+        }
+
     </style>
 </head>
 <body>
     <script src="../build/build.js"></script>
     <script>
 
+        var moment = require('moment');
         var Calendar = require('calendar');
 
         var calendar = new Calendar();
+        calendar.select(null)
 
-        calendar.on('select', function() {
-            console.log(arguments);
-        });
+        //disable weekends
+        calendar.isDayDisabled = function(day) {
+            return day.day() === 0 || day.day() === 6;
+        };
+
+        calendar.render();
 
         document.body.appendChild(calendar.el);
 
