@@ -329,7 +329,7 @@ Calendar.prototype.getStartDate = function(date) {
  * @return {Element}
  */
 Calendar.prototype.renderDay = function(data) {
-  var day = domify('<span />');
+  var day = domify('<span></span>');
   day.classList.add('calendar__day');
   day.classList.add(this.dayTestClassFormat + data.day);
 
