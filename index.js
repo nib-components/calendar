@@ -2,7 +2,7 @@ var moment = require('moment');
 var domify = require('domify');
 var delegate = require('delegate');
 var emitter = require('emitter');
-var template = require('./template');
+var template = require('./template.html');
 
 /**
  * Create a calendar object
