@@ -25,6 +25,9 @@ function Calendar(options) {
   this.nextMonthNavClass  = options.nextMonthNavClass || this.nextMonthNavClass;
 
   this.el = domify(options.template || template);
+  this.dayTemplate = this.el.querySelector('.js-day-template');
+  this.dayTemplate.classList.remove('js-day-template');
+  this.el.removeChild(this.dayTemplate);
   delegate.bind(this.el, '.js-next', 'click', this.next.bind(this));
   delegate.bind(this.el, '.js-previous', 'click', this.previous.bind(this));
   delegate.bind(this.el, '.js-today', 'click', this.today.bind(this));
@@ -329,8 +332,7 @@ Calendar.prototype.getStartDate = function(date) {
  * @return {Element}
  */
 Calendar.prototype.renderDay = function(data) {
-  var day = domify('<span></span>');
-  day.classList.add('calendar__day');
+  var day = this.dayTemplate.cloneNode();
   day.classList.add(this.dayTestClassFormat + data.day);
 
   if (data.isSelected) {
