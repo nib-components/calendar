@@ -24,7 +24,7 @@ function Calendar(options) {
   this.prevMonthNavClass  = options.prevMonthNavClass || this.prevMonthNavClass;
   this.nextMonthNavClass  = options.nextMonthNavClass || this.nextMonthNavClass;
 
-  this.el = domify(template);
+  this.el = domify(options.template || template);
   delegate.bind(this.el, '.js-next', 'click', this.next.bind(this));
   delegate.bind(this.el, '.js-previous', 'click', this.previous.bind(this));
   delegate.bind(this.el, '.js-today', 'click', this.today.bind(this));

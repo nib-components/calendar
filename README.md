@@ -28,6 +28,8 @@ Options:
 
  - prevMonthNavClass
  - nextMonthNavClass
+ 
+ - template - the calendar template to use
 
 #### .previous()
 
