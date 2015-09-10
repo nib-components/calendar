@@ -1,2 +1,4 @@
 build/
 components/
+.idea/
+node_modules/
