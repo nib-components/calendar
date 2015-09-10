@@ -1,6 +1,6 @@
 var moment = require('moment');
 var assert = require('assert');
-var Calendar = require('calendar');
+var Calendar = require('..');
 
 describe('Calendar', function() {
 
@@ -195,8 +195,8 @@ describe('Calendar', function() {
       calendar.render();
 
       //check that a Sunday is disabled but a Monday is not
-      assert(calendar.el.querySelector('.js-select:nth-child(15)').classList.contains('is-disabled'))
-      assert(!calendar.el.querySelector('.js-select:nth-child(17)').classList.contains('is-disabled'))
+      assert(calendar.el.querySelector('.js-select:nth-child(15)').classList.contains('is-disabled'));
+      assert(!calendar.el.querySelector('.js-select:nth-child(17)').classList.contains('is-disabled'));
 
     });
 
@@ -205,8 +205,8 @@ describe('Calendar', function() {
       calendar.view('2015/04/09');
 
       //check that a 29th is in the previous month but the 1st isn't
-      assert(calendar.el.querySelector('.js-select:nth-child(1)').classList.contains('is-prev-month'))
-      assert(!calendar.el.querySelector('.js-select:nth-child(5)').classList.contains('is-prev-month'))
+      assert(calendar.el.querySelector('.js-select:nth-child(1)').classList.contains('is-prev-month'));
+      assert(!calendar.el.querySelector('.js-select:nth-child(5)').classList.contains('is-prev-month'));
 
     });
 
@@ -215,8 +215,8 @@ describe('Calendar', function() {
       calendar.view('2015/04/09');
 
       //check that a 9th is in the next month but the 30th isn't
-      assert(calendar.el.querySelector('.js-select:nth-child(42)').classList.contains('is-next-month'))
-      assert(!calendar.el.querySelector('.js-select:nth-child(33)').classList.contains('is-next-month'))
+      assert(calendar.el.querySelector('.js-select:nth-child(42)').classList.contains('is-next-month'));
+      assert(!calendar.el.querySelector('.js-select:nth-child(33)').classList.contains('is-next-month'));
     });
 
   });

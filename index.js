@@ -446,7 +446,7 @@ Calendar.prototype.isDayInNextMonth = function(day) {
  */
 Calendar.prototype.renderBody = function() {
   var fragment = document.createDocumentFragment();
-  var current = this.getStartDate(this.current);
+  var current = this.getStartDate(this.current).utc();
   var today = moment();
 
   for (var i = 0; i <= 41; i++) {
@@ -459,7 +459,11 @@ Calendar.prototype.renderBody = function() {
       isSelected:     this.isDaySelected(current),
       isDisabled:     this.isDayDisabled(current)
     }));
-    current.add(1, 'days');
+    // Convert to UTC time first so that DST doesn't affect day additions
+    // this problem occurs in iOS and causes days to add to +23 Hours instead of +1 day
+    //current.utc().add(1, 'days').local();
+    var duration = moment.duration({'days' : 1});
+    current.add(duration);
   }
 
   while (this.body.childNodes.length>0) {

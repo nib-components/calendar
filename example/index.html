@@ -17,7 +17,18 @@
         }
 
         .calendar__days .calendar__day.is-disabled {
+            cursor: NONE;
             background-color: lightpink;
+        }
+        .example-prev-button{
+            height: 20px;
+            width: 20px;
+            background: red;
+        }
+        .example-next-button{
+            height: 20px;
+            width: 20px;
+            background: blue;
         }
 
     </style>
@@ -33,13 +44,13 @@
             selectTodayByDefault:   false,
             monthFormat:            'MMMM',
             dayOfWeekFormat:        'ddd',
-            prevMonthNavClass:      'v2-icon v2-icon--smallest v2-icon--chevron-circle-inverse v2-icon--rotate-180',
-            nextMonthNavClass:      'v2-icon v2-icon--smallest v2-icon--chevron-circle-inverse'
+            prevMonthNavClass:      'example-prev-button',
+            nextMonthNavClass:      'example-next-button'
         });
 
         //disable going backward
         calendar.canNavigateToPreviousMonth = function() {
-            return false;
+            return true;
         };
 
         //enable going forward

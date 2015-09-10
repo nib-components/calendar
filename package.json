@@ -1,9 +1,10 @@
 {
   "name": "@nib-components/calendar",
-  "version": "1.2.3",
+  "version": "1.4.0",
   "description": "Calendar that allows selecting dates and emits events",
   "main": "index.js",
   "scripts": {
+    "test": "mochify",
     "styles.build": "sass-composer node_modules/@nib-styles/calendar/index.css -o build/build.css",
     "scripts.build": "browserify -r ./index.js:calendar -r moment -o build/build.js",
     "scripts.watch": "watchify -r ./index.js:calendar -r moment -o build/build.js"
@@ -21,7 +22,11 @@
   },
   "devDependencies": {
     "@nib-styles/calendar": "*",
-    "v2-icons": "*"
+    "browserify": "^11.0.1",
+    "mochify": "^2.13.0",
+    "sass-composer": "^1.1.7",
+    "v2-icons": "*",
+    "watchify": "^3.4.0"
   },
   "browserify": {
     "transform": [
