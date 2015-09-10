@@ -446,11 +446,10 @@ Calendar.prototype.isDayInNextMonth = function(day) {
  */
 Calendar.prototype.renderBody = function() {
   var fragment = document.createDocumentFragment();
-  var mCurrent = this.getStartDate(this.current).format('DD/MM/YYYY');
+  var current = this.getStartDate(this.current);
   var today = moment();
 
   for (var i = 0; i <= 41; i++) {
-    var current = moment(mCurrent, 'DD/MM/YYYY');
     fragment.appendChild(this.renderDay({
       day:            current.date(),
       date:           current.startOf('day').format(),
@@ -460,10 +459,7 @@ Calendar.prototype.renderBody = function() {
       isSelected:     this.isDaySelected(current),
       isDisabled:     this.isDayDisabled(current)
     }));
-    mCurrent = (current.date() + 1).toString() + '/' + current.format('MM/YYYY');
-    if(!moment(mCurrent, 'DD/MM/YYYY').isValid()){ // not valid if next month
-      mCurrent = '01/' + current.format('MM/YYYY');
-    }
+    current.add(1, 'days');
   }
 
   while (this.body.childNodes.length>0) {
