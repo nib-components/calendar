@@ -446,7 +446,7 @@ Calendar.prototype.isDayInNextMonth = function(day) {
  */
 Calendar.prototype.renderBody = function() {
   var fragment = document.createDocumentFragment();
-  var current = this.getStartDate(this.current).utc();
+  var current = this.getStartDate(this.current);
   var today = moment();
 
   for (var i = 0; i <= 41; i++) {
