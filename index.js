@@ -446,24 +446,20 @@ Calendar.prototype.isDayInNextMonth = function(day) {
  */
 Calendar.prototype.renderBody = function() {
   var fragment = document.createDocumentFragment();
-  var current = this.getStartDate(this.current);
-  var today = moment();
+  var current = this.getStartDate(this.current).utc();
+  var today = moment().utc();
 
   for (var i = 0; i <= 41; i++) {
     fragment.appendChild(this.renderDay({
-      day:            current.date(),
-      date:           current.startOf('day').format(),
-      isToday:        this.isSameDay(current, today),
-      isInPrevMonth:  this.isDayInPrevMonth(current),
-      isInNextMonth:  this.isDayInNextMonth(current),
-      isSelected:     this.isDaySelected(current),
-      isDisabled:     this.isDayDisabled(current)
+      day:            current.clone().local().date(),
+      date:           current.clone().local().startOf('day').format(),
+      isToday:        this.isSameDay(current.clone().local(), today.clone().local()),
+      isInPrevMonth:  this.isDayInPrevMonth(current.clone().local()),
+      isInNextMonth:  this.isDayInNextMonth(current.clone().local()),
+      isSelected:     this.isDaySelected(current.clone().local()),
+      isDisabled:     this.isDayDisabled(current.clone().local())
     }));
-    // Convert to UTC time first so that DST doesn't affect day additions
-    // this problem occurs in iOS and causes days to add to +23 Hours instead of +1 day
-    //current.utc().add(1, 'days').local();
-    var duration = moment.duration({'days' : 1});
-    current.add(duration);
+    current.add(moment.duration({'days' : 1}));
   }
 
   while (this.body.childNodes.length>0) {
