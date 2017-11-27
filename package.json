@@ -1,6 +1,6 @@
 {
   "name": "@nib-components/calendar",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "Calendar that allows selecting dates and emits events",
   "main": "index.js",
   "scripts": {

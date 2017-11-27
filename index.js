@@ -459,7 +459,7 @@ Calendar.prototype.renderBody = function() {
       isSelected:     this.isDaySelected(current.clone().local()),
       isDisabled:     this.isDayDisabled(current.clone().local())
     }));
-    current.add(moment.duration({'days' : 1}));
+    current.local().add(moment.duration({'days' : 1})).utc();
   }
 
   while (this.body.childNodes.length>0) {
